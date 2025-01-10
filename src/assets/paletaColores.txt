@@ -1,0 +1,10 @@
+#c6e83a (Verde lima) – Color principal
+#a8d13a (Verde más oscuro) – Color secundario
+#333333 (Gris oscuro) – Texto principal
+#e0e0e0 (Gris claro) – Fondos suaves o detalles secundarios
+#f2f2f2 (Blanco) – Fondo principal
+#222222  (Negro) – Fondo de encabezado, pie de página, o texto destacado
+#f1c232 (Amarillo dorado) – Para detalles pequeños y de énfasis
+
+#8dbd3e (Verde oscuro, más visible para el texto blanco).
+#6f9e2a (Verde aún más oscuro, para un contraste más fuerte).

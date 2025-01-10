@@ -1,94 +1,60 @@
-import './App.css';
-import Logo from './assets/ComoEnCasa.svg'; // Importa el archivo SVG del logo
+import React, { useEffect, useRef, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Home from './pages/Home'; // Tu página de inicio
+// import Login from './pages/Login'; // Tu página de login
+// import Menu from './pages/Menu'; // Página donde los usuarios pueden ver el menú
+// import Order from './pages/Order'; // Página donde los usuarios pueden hacer pedidos
+import Header from './components/Header'; // Componente para el encabezado
+import Footer from './components/Footer'; // Componente para el pie de página
 
-function App() {
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const headerRef = useRef<HTMLHeadingElement | null>(null);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+  // Verifica si el usuario está autenticado al cargar la página
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // Obtener la altura del header dinámicamente
+  useEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+  }, [headerRef]);
+
+  // Ruta protegida para usuarios autenticados
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    return isAuthenticated ? (
+      <>{children}</>
+    ) : (
+      <Navigate to="/login" /> // Redirige al login si no está autenticado
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
-      {/* Header */}
-      <header className="bg-green-600 text-white p-4 shadow-lg">
-        <h1 className="text-2xl font-bold flex items-center justify-center">
-          <img
-            src={Logo} // Usamos el logo SVG importado
-            alt="Logo"
-            className="mr-2"
-            width="40"
-            height="40"
-          />
-          ¡Como en Casa!
-        </h1>
-      </header>
+    <Router>
+      <div className="min-h-screen bg-[#f2f2f2] text-[#333333]"> {/* Fondo principal blanco y texto gris oscuro */}
+        {/* Header */}
+        <Header ref={headerRef} />
 
-      {/* Main Content */}
-      <main className="container mx-auto p-4">
-        {/* Buttons */}
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Botones</h2>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
-            Primario
-          </button>
-          <button className="bg-gray-700 text-gray-100 px-4 py-2 rounded-md ml-4 hover:bg-gray-600 transition">
-            Secundario
-          </button>
-        </section>
+        <main className="min-h-screen p-0" style={{ paddingTop: `${headerHeight}px` }}>
+          {/* Switch de rutas */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* Otras rutas */}
+          </Routes>
+        </main>
 
-        {/* Cards */}
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Tarjetas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-              <h3 className="text-lg font-bold mb-2">Tarjeta 1</h3>
-              <p>Descripción breve de esta tarjeta.</p>
-            </div>
-            <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-              <h3 className="text-lg font-bold mb-2">Tarjeta 2</h3>
-              <p>Otra tarjeta con contenido diferente.</p>
-            </div>
-            <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-              <h3 className="text-lg font-bold mb-2">Tarjeta 3</h3>
-              <p>Detalles adicionales de esta tarjeta.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Form */}
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Formulario</h2>
-          <form className="bg-gray-800 p-4 rounded-lg shadow-md">
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
-                Nombre
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-gray-100"
-                placeholder="Ingresa tu nombre"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-700 text-gray-100"
-                placeholder="Ingresa tu correo"
-              />
-            </div>
-            <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
-              Enviar
-            </button>
-          </form>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-100 py-4 text-center">
-        <p>© 2025 Como en Casa. Todos los derechos reservados.</p>
-      </footer>
-    </div>
+        {/* Footer */}
+        <Footer />
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
