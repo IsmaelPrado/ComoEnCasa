@@ -1,77 +1,88 @@
-import React, { forwardRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../assets/ComoEnCasa.png'; // Importa tu logo
+import { Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import logo from '../assets/ComoEnCasa.png'; // Asegúrate de tener el archivo en la carpeta de assets.
 
-// Usamos forwardRef para poder pasar un ref al componente Header
-const Header = forwardRef<HTMLHeadingElement, {}>((props, ref) => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token'); // Verifica si el usuario está autenticado
-
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Elimina el token del localStorage
-    navigate('/login'); // Redirige al login después de cerrar sesión
-  };
+const Header = () => {
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <header
-      ref={ref} // Asignamos el ref al elemento <header>
-      className="bg-[#222222] text-[#f2f2f2] p-4 shadow-lg fixed top-0 left-0 w-full z-50"
-    >
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo y nombre */}
+    <header className="bg-[#222222] text-[#f2f2f2] shadow-lg">
+      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+        {/* Logo y Nombre */}
         <div className="flex items-center">
-          <img
-            src={Logo} // Cambia esta URL por la de tu logo
-            alt="Logo"
-            className="mr-2 w-12 h-12" // Redimensiona el logo a 48px x 48px
-          />
-          <h1 className="text-2xl font-bold text-[#f2f2f2]">¡Como en Casa!</h1> {/* Texto en verde lima */}
+          <img src={logo} alt="Logo Como en Casa" className="w-12 h-12 mr-4" />
+          <Link to="/" className="text-2xl font-bold hover:text-[#c6e83a] transition-colors">
+            Como en Casa
+          </Link>
         </div>
 
         {/* Navegación */}
         <nav>
           <ul className="flex space-x-6">
-            <li>
-              <Link to="/" className="hover:text-[#a8d13a] transition-colors duration-300"> {/* Hover en verde más oscuro */}
-                Inicio
-              </Link>
-            </li>
-            {token ? (
+            {isAuthenticated ? (
               <>
                 <li>
-                  <Link to="/menu" className="hover:text-[#a8d13a] transition-colors duration-300">
-                    Menú
+                  <Link
+                    to="/dashboard"
+                    className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
+                  >
+                    Dashboard
                   </Link>
                 </li>
-                <li>
-                  <Link to="/order" className="hover:text-[#a8d13a] transition-colors duration-300">
-                    Ordenar
-                  </Link>
-                </li>
+                {user?.usuario.rol === 'admin' && (
+                  <li>
+                    <Link
+                      to="/admin"
+                      className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
+                    >
+                      Admin Panel
+                    </Link>
+                  </li>
+                )}
+                {user?.usuario.rol === 'usuario' && (
+                  <li>
+                    <Link
+                      to="/user"
+                      className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
+                    >
+                      User Panel
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+                    onClick={() => logout()}
+                    className="bg-[#a8d13a] hover:bg-[#6f9e2a] text-[#ffffff] font-semibold py-2 px-4 rounded transition-colors"
                   >
-                    Cerrar sesión
+                    Logout
                   </button>
                 </li>
               </>
             ) : (
-              <li>
-                <Link to="/login" className="hover:text-[#a8d13a] transition-colors duration-300">
-                  Iniciar sesión
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/"
+                    className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/login"
+                    className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </nav>
       </div>
     </header>
   );
-});
-
-// Asignamos un displayName al componente para mayor claridad
-Header.displayName = 'Header';
+};
 
 export default Header;
