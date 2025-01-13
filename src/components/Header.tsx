@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { useState } from 'react'; // Importar useState para controlar la apertura del modal
 import logo from '../assets/ComoEnCasa.png'; // Asegúrate de tener el archivo en la carpeta de assets.
+import LoginModal from '../pages/Login';
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); // Estado para controlar la apertura del modal
 
   return (
     <header className="bg-[#222222] text-[#f2f2f2] shadow-lg">
@@ -69,18 +72,21 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/login"
+                  <button
+                    onClick={() => setIsLoginModalOpen(true)} // Abrir el modal de login
                     className="text-[#e0e0e0] hover:text-[#c6e83a] font-medium transition-colors"
                   >
                     Login
-                  </Link>
+                  </button>
                 </li>
               </>
             )}
           </ul>
         </nav>
       </div>
+
+      {/* Aquí pasamos el estado `isLoginModalOpen` al componente LoginModal */}
+      <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
     </header>
   );
 };
